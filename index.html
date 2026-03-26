@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Портфолио Egar'а</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dx-bg': '#0A0A0A',
+                        'dx-bg-secondary': '#121212',
+                        'dx-border': '#3A3A3A',
+                        'dx-text': '#C7C7C7',
+                        'dx-text-dark': '#8A8A8A',
+                        'dx-gold': '#BFA65A',
+                        'dx-gold-light': '#D7C589',
+                    },
+                    fontFamily: { 'exo': ['"Exo 2"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html, body { max-width: 100vw; overflow-x: hidden; scroll-behavior: smooth; scroll-padding-top: 100px; }
+        body { background-color: #0A0A0A; font-family: 'Exo 2', sans-serif; color: #C7C7C7; padding-top: 60px; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background-color: #BFA65A; border-radius: 4px; border: 2px solid #121212; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #D7C589; }
+
+        .top-nav { background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(5px); border-bottom: 1px solid #3A3A3A; transition: box-shadow 0.3s; }
+        
+        .nav-dropdown {
+            background-color: #121212; color: #D7C589; border: 1px solid #BFA65A; border-radius: 0.5rem; 
+            padding: 0.5rem 1rem; font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1rem; 
+            outline: none; cursor: pointer; width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23BFA65A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; padding-right: 2.5rem;
+            transition: color 0.3s, border-color 0.3s;
+        }
+        .nav-dropdown:focus { box-shadow: 0 0 10px rgba(191, 166, 90, 0.3); }
+        .nav-dropdown option { background-color: #121212; color: #C7C7C7; font-weight: normal; }
+        
+        .nav-dropdown.blue-mode { color: #93C5FD; border-color: #60A5FA; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360A5FA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); }
+
+        .group-title { font-size: clamp(1.5rem, 6vw, 2.5rem); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; margin: 2rem 0; line-height: 1.2; word-wrap: break-word; hyphens: auto; }
+        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.5rem; flex-wrap: wrap; gap: 1rem; }
+        .category-title { font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: 600; line-height: 1.3; word-wrap: break-word; hyphens: auto; flex: 1 1 100%; }
+        
+        @media (min-width: 640px) { .category-title { flex: none; } }
+
+        select.sort-dropdown { background-color: #121212; color: #C7C7C7; border: 1px solid #3A3A3A; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-family: 'Exo 2', sans-serif; outline: none; cursor: pointer; transition: border-color 0.2s; max-width: 100%; }
+        select.sort-dropdown:focus { border-color: #BFA65A; }
+
+        .game-card { position: relative; transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; border-radius: 0.5rem; border: 1px solid #3A3A3A; background: #121212; display: flex; flex-direction: column; text-decoration: none; outline: none; height: 100%; cursor: pointer; }
+        
+        .theme-gold:hover { transform: translateY(-5px); z-index: 20; box-shadow: 0 10px 25px rgba(191, 166, 90, 0.15); border-color: #BFA65A; }
+        .theme-blue:hover { transform: translateY(-5px); z-index: 20; box-shadow: 0 10px 25px rgba(96, 165, 250, 0.15); border-color: #60A5FA; }
+
+        .game-image { width: 100%; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem; display: block; object-fit: cover; aspect-ratio: 460/215; }
+        .game-title-container { padding: 0.75rem; flex-grow: 1; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .game-title { font-weight: 700; font-size: 0.9rem; line-height: 1.2; color: #C7C7C7; transition: color 0.2s; }
+        
+        .theme-gold:hover .game-title { color: #BFA65A; }
+        .theme-blue:hover .game-title { color: #60A5FA; }
+        
+        .game-info-modal { position: absolute; top: -10px; left: calc(100% + 15px); width: 340px; background-color: #0A0A0A; border: 1px solid #3A3A3A; border-radius: 0.5rem; padding: 1.25rem; box-shadow: 0 15px 40px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; transition: opacity 0.2s ease, transform 0.2s ease; transform: translateX(-15px); z-index: 50; pointer-events: none; }
+        .game-card.flip-tooltip .game-info-modal { left: auto; right: calc(100% + 15px); transform: translateX(15px); }
+        .game-card:hover .game-info-modal { opacity: 1; visibility: visible; transform: translateX(0); }
+
+        .theme-gold .game-info-modal { border-color: #BFA65A; }
+        .theme-blue .game-info-modal { border-color: #60A5FA; }
+
+        #mobile-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 1rem; }
+        #mobile-modal.active { opacity: 1; pointer-events: auto; }
+        .mobile-modal-content { background: #0A0A0A; border: 1px solid #BFA65A; border-radius: 0.5rem; padding: 1.5rem; max-width: 450px; width: 100%; position: relative; transform: translateY(20px); transition: transform 0.3s; max-height: 90vh; overflow-y: auto; }
+        #mobile-modal.active .mobile-modal-content { transform: translateY(0); }
+        .mobile-modal-content.theme-gold { border-color: #BFA65A; }
+        .mobile-modal-content.theme-blue { border-color: #60A5FA; }
+
+        #scroll-top-btn { position: fixed; bottom: 30px; right: 30px; background-color: rgba(191, 166, 90, 0.8); color: #000; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; transition: opacity 0.3s, transform 0.3s, background-color 0.3s; opacity: 0; pointer-events: none; z-index: 100; border: 2px solid #D7C589; }
+        #scroll-top-btn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        #scroll-top-btn:hover { background-color: #D7C589; transform: scale(1.1); }
+
+        @media (max-width: 1024px) {
+            .game-info-modal { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-dx-bg font-exo text-dx-text antialiased">
+
+    <nav class="fixed top-0 left-0 w-full top-nav z-40 flex justify-center py-3 px-4 shadow-lg">
+        <select id="nav-select" class="nav-dropdown" onchange="handleNavChange(this.value)">
+            <option value="" disabled selected>Перейти к разделу...</option>
+        </select>
+    </nav>
+
+    <div class="container mx-auto p-4 md:p-8 max-w-[90rem]">
+        
+        <header class="text-center mb-4 relative py-8">
+            <h1 class="font-bold text-dx-gold-light uppercase" style="font-size: clamp(1.8rem, 8vw, 3.75rem); letter-spacing: 0.05em; text-shadow: 0 0 20px rgba(191,166,90,0.3); line-height: 1.1; word-wrap: break-word;">Портфолио Egar'а</h1>
+        </header>
+
+        <main id="portfolio-container" class="pb-16"></main>
+
+        <footer class="text-center py-8 border-t border-dx-border mt-12">
+            <p class="text-dx-text-dark">© 2024 Egar. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <div id="mobile-modal" onclick="if(event.target === this) closeMobileModal()">
+        <div class="mobile-modal-content" id="mobile-modal-content"></div>
+    </div>
+
+    <button id="scroll-top-btn" onclick="window.scrollTo(0,0)">↑</button>
+
+    <script>
+        let globalData = [];
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'Н/Д';
+            return dateStr.includes(' ') ? dateStr.split(' ')[0] : dateStr;
+        }
+
+        function sortGames(games, criteria) {
+            return [...games].sort((a, b) => {
+                switch(criteria) {
+                    case 'rating-desc': return b.rating - a.rating;
+                    case 'rating-asc': return a.rating - b.rating;
+                    case 'name-asc': return a.name.localeCompare(b.name, 'ru');
+                    case 'name-desc': return b.name.localeCompare(a.name, 'ru');
+                    case 'date-desc': return new Date(b.release_date || 0) - new Date(a.release_date || 0);
+                    case 'date-asc': return new Date(a.release_date || 0) - new Date(b.release_date || 0);
+                    default: return 0;
+                }
+            });
+        }
+
+        function handleNavChange(value) {
+            if(value) {
+                window.location.hash = value;
+            }
+        }
+
+        function openMobileModal(game, themeClass, titleColorClass) {
+            const modal = document.getElementById('mobile-modal');
+            const content = document.getElementById('mobile-modal-content');
+            
+            content.className = `mobile-modal-content ${themeClass}`;
+            const btnColorClass = themeClass === 'theme-blue' ? 'bg-blue-500 hover:bg-blue-400' : 'bg-dx-gold hover:bg-dx-gold-light';
+            
+            content.innerHTML = `
+                <button class="absolute top-3 right-4 text-dx-text-dark hover:text-white text-3xl leading-none" onclick="closeMobileModal()">&times;</button>
+                <img src="${game.pic_link}" alt="${game.name}" class="w-full rounded-md mb-4 object-cover" style="aspect-ratio: 460/215;">
+                <h4 class="font-bold ${titleColorClass} mb-3 leading-tight pr-6" style="font-size: clamp(1.2rem, 5vw, 1.5rem); word-wrap: break-word;">${game.name}</h4>
+                <div class="text-sm space-y-2 mb-4 text-dx-text">
+                    <p><strong class="text-dx-text-dark">Разработчик:</strong> ${game.developers || 'Н/Д'}</p>
+                    <p><strong class="text-dx-text-dark">Издатель:</strong> ${game.publishers || 'Н/Д'}</p>
+                    <p><strong class="text-dx-text-dark">Выход:</strong> ${formatDate(game.release_date)}</p>
+                    <p><strong class="text-dx-text-dark">Обзоры:</strong> <span class="text-green-400 font-bold">${game.reviews_percent}%</span> <span class="text-dx-text-dark">(${game.reviews_count})</span></p>
+                </div>
+                <hr class="border-dx-border my-4">
+                <p class="text-sm text-dx-text-dark leading-relaxed mb-6">${game.description}</p>
+                <a href="${game.link}" target="_blank" class="block w-full text-center py-3 rounded-md font-bold text-black transition-colors ${btnColorClass}">Перейти на страницу</a>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMobileModal() {
+            document.getElementById('mobile-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function renderCategory(groupIndex, catIndex, containerId, sortCriteria = 'rating-desc') {
+            const group = globalData[groupIndex];
+            const category = group.categories[catIndex];
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            const isBlue = group.group_id === 'unofficial-section';
+            const themeClass = isBlue ? 'theme-blue' : 'theme-gold';
+            const titleColorClass = isBlue ? 'text-blue-300' : 'text-dx-gold-light';
+
+            const sortedGames = sortGames(category.games, sortCriteria);
+
+            sortedGames.forEach(game => {
+                const desc = game.description.length > 250 ? game.description.substring(0, 250) + '...' : game.description;
+                const card = document.createElement('a');
+                card.href = game.link;
+                card.className = `game-card ${themeClass}`;
+                
+                card.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 1024) {
+                        e.preventDefault();
+                        openMobileModal(game, themeClass, titleColorClass);
+                    } else {
+                        e.preventDefault();
+                        window.open(game.link, '_blank');
+                    }
+                });
+                
+                card.addEventListener('mouseenter', () => {
+                    if(window.innerWidth > 1024) {
+                        const rect = card.getBoundingClientRect();
+                        const rightSpace = window.innerWidth - rect.right;
+                        if (rightSpace < 360) card.classList.add('flip-tooltip');
+                        else card.classList.remove('flip-tooltip');
+                    }
+                });
+
+                card.innerHTML = `
+                    <img src="${game.pic_link}" alt="${game.name}" class="game-image" loading="lazy">
+                    <div class="game-title-container">
+                        <h3 class="game-title">${game.name}</h3>
+                    </div>
+                    
+                    <div class="game-info-modal text-left">
+                        <h4 class="font-bold ${titleColorClass} mb-2 leading-tight" style="font-size: clamp(1rem, 4vw, 1.125rem); word-wrap: break-word;">${game.name}</h4>
+                        <div class="text-sm space-y-1 mb-3 text-dx-text">
+                            <p><strong class="text-dx-text-dark">Разработчик:</strong> ${game.developers || 'Н/Д'}</p>
+                            <p><strong class="text-dx-text-dark">Издатель:</strong> ${game.publishers || 'Н/Д'}</p>
+                            <p><strong class="text-dx-text-dark">Выход:</strong> ${formatDate(game.release_date)}</p>
+                            <p><strong class="text-dx-text-dark">Обзоры:</strong> <span class="text-green-400 font-bold">${game.reviews_percent}%</span> <span class="text-dx-text-dark">(${game.reviews_count})</span></p>
+                        </div>
+                        <hr class="border-dx-border my-2">
+                        <p class="text-sm text-dx-text-dark leading-relaxed">${desc}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        async function loadPortfolio() {
+            try {
+                const response = await fetch('data.json');
+                globalData = await response.json();
+                
+                const container = document.getElementById('portfolio-container');
+                const navSelect = document.getElementById('nav-select');
+
+                globalData.forEach((group, groupIndex) => {
+                    const isBlue = group.group_id === 'unofficial-section';
+                    const groupSection = document.createElement('div');
+
+                    if (!isBlue) {
+                        groupSection.innerHTML = `<h2 class="group-title text-dx-gold-light scroll-target" id="${group.group_id}" style="text-shadow: 0 0 15px rgba(191,166,90,0.3);">${group.group_name}</h2>`;
+                        navSelect.innerHTML += `<option value="#${group.group_id}" style="font-weight:bold;">■ ${group.group_name}</option>`;
+
+                        group.categories.forEach((cat, catIndex) => {
+                            navSelect.innerHTML += `<option value="#${cat.category_id}">&nbsp;&nbsp;&nbsp;— ${cat.category_name}</option>`;
+                            const catSection = document.createElement('section');
+                            catSection.className = 'mb-12 scroll-target';
+                            catSection.id = cat.category_id;
+                            const gridId = `grid-${groupIndex}-${catIndex}`;
+
+                            catSection.innerHTML = `
+                                <div class="category-header border-b border-dx-border">
+                                    <h3 class="category-title text-dx-gold w-full sm:w-auto pr-0 sm:pr-4 mb-2 sm:mb-0">${cat.category_name}</h3>
+                                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+                                        <span class="text-sm text-dx-text-dark hidden sm:inline">Сортировка:</span>
+                                        <select class="sort-dropdown focus:border-dx-gold w-full sm:w-auto" onchange="handleSortChange(${groupIndex}, ${catIndex}, '${gridId}', this.value)">
+                                            <option value="rating-desc">По рейтингу (высш. -> низш.)</option>
+                                            <option value="rating-asc">По рейтингу (низш. -> высш.)</option>
+                                            <option value="name-asc">По имени (А -> Я)</option>
+                                            <option value="name-desc">По имени (Я -> А)</option>
+                                            <option value="date-desc">По дате (сначала новые)</option>
+                                            <option value="date-asc">По дате (сначала старые)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="${gridId}" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
+                            `;
+                            groupSection.appendChild(catSection);
+                        });
+                    } 
+                    else {
+                        const cat = group.categories[0]; 
+                        navSelect.innerHTML += `<option value="#${cat.category_id}" style="font-weight:bold;">■ ${cat.category_name}</option>`;
+                        const catSection = document.createElement('section');
+                        catSection.className = 'mb-12 mt-16 scroll-target'; 
+                        catSection.id = cat.category_id;
+                        const gridId = `grid-${groupIndex}-0`;
+
+                        catSection.innerHTML = `
+                            <div class="category-header border-b border-blue-900 pb-4">
+                                <h2 class="font-bold text-blue-300 uppercase text-center w-full mb-4 sm:mb-0 sm:w-auto sm:text-left pr-0 sm:pr-4" style="font-size: clamp(1.5rem, 6vw, 2.25rem); letter-spacing: 0.05em; text-shadow: 0 0 15px rgba(96, 165, 250, 0.3); line-height: 1.2; word-wrap: break-word;">${cat.category_name}</h2>
+                                <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+                                    <span class="text-sm text-dx-text-dark hidden sm:inline">Сортировка:</span>
+                                    <select class="sort-dropdown focus:border-blue-400 w-full sm:w-auto" onchange="handleSortChange(${groupIndex}, 0, '${gridId}', this.value)">
+                                        <option value="rating-desc">По рейтингу (высш. -> низш.)</option>
+                                        <option value="rating-asc">По рейтингу (низш. -> высш.)</option>
+                                        <option value="name-asc">По имени (А -> Я)</option>
+                                        <option value="name-desc">По имени (Я -> А)</option>
+                                        <option value="date-desc">По дате (сначала новые)</option>
+                                        <option value="date-asc">По дате (сначала старые)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="${gridId}" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
+                        `;
+                        groupSection.appendChild(catSection);
+                    }
+
+                    container.appendChild(groupSection);
+                    group.categories.forEach((cat, catIndex) => {
+                        renderCategory(groupIndex, catIndex, `grid-${groupIndex}-${catIndex}`);
+                    });
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        window.handleSortChange = function(groupIndex, catIndex, containerId, criteria) {
+            renderCategory(groupIndex, catIndex, containerId, criteria);
+        };
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scroll-top-btn');
+            if (window.scrollY > 300) btn.classList.add('visible');
+            else btn.classList.remove('visible');
+
+            const navSelect = document.getElementById('nav-select');
+            
+            if (window.scrollY < 100) {
+                navSelect.value = "";
+                navSelect.classList.remove('blue-mode');
+                return;
+            }
+
+            const targets = document.querySelectorAll('.scroll-target');
+            let currentId = '';
+
+            targets.forEach(target => {
+                const rect = target.getBoundingClientRect();
+                if (rect.top <= 150) {
+                    currentId = target.id;
+                }
+            });
+
+            if (currentId) {
+                const targetValue = `#${currentId}`;
+                if (navSelect.value !== targetValue && navSelect.querySelector(`option[value="${targetValue}"]`)) {
+                    navSelect.value = targetValue;
+                    
+                    if (targetValue === '#cat-3') {
+                        navSelect.classList.add('blue-mode');
+                    } else {
+                        navSelect.classList.remove('blue-mode');
+                    }
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadPortfolio);
+    </script>
+</body>
+</html>
