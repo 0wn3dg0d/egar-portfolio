@@ -415,7 +415,7 @@
 
         async function loadData() {
             try {
-                const response = await fetch('data.json');
+                const response = await fetch('data.json?v=' + new Date().getTime());
                 globalData = await response.json();
                 renderPortfolio();
             } catch (error) {
