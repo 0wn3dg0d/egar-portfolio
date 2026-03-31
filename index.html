@@ -52,6 +52,16 @@
         
         .nav-dropdown.blue-mode { color: #93C5FD; border-color: #60A5FA; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360A5FA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); }
 
+        .lang-btn {
+            background: transparent; color: #BFA65A; border: 1px solid #BFA65A; border-radius: 0.5rem;
+            padding: 0.5rem 1rem; font-family: 'Exo 2', sans-serif; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
+            min-width: 60px;
+        }
+        .lang-btn:hover { background: #BFA65A; color: #0A0A0A; }
+        .lang-btn.blue-mode { color: #93C5FD; border-color: #60A5FA; }
+        .lang-btn.blue-mode:hover { background: #60A5FA; color: #0A0A0A; }
+
         .group-title { font-size: clamp(1.5rem, 6vw, 2.5rem); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; text-align: center; margin: 2rem 0; line-height: 1.2; word-wrap: break-word; hyphens: auto; }
         .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.5rem; flex-wrap: wrap; gap: 1rem; }
         .category-title { font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: 600; line-height: 1.3; word-wrap: break-word; hyphens: auto; flex: 1 1 100%; }
@@ -98,22 +108,21 @@
 </head>
 <body class="bg-dx-bg font-exo text-dx-text antialiased">
 
-    <nav class="fixed top-0 left-0 w-full top-nav z-40 flex justify-center py-3 px-4 shadow-lg">
-        <select id="nav-select" class="nav-dropdown" onchange="handleNavChange(this.value)">
-            <option value="" disabled selected>Перейти к разделу...</option>
-        </select>
+    <nav class="fixed top-0 left-0 w-full top-nav z-40 flex justify-center py-3 px-4 shadow-lg gap-4">
+        <select id="nav-select" class="nav-dropdown" onchange="handleNavChange(this.value)"></select>
+        <button id="lang-btn" class="lang-btn" onclick="toggleLanguage()">EN</button>
     </nav>
 
     <div class="container mx-auto p-4 md:p-8 max-w-[90rem]">
         
         <header class="text-center mb-4 relative py-8">
-            <h1 class="font-bold text-dx-gold-light uppercase" style="font-size: clamp(1.8rem, 8vw, 3.75rem); letter-spacing: 0.05em; text-shadow: 0 0 20px rgba(191,166,90,0.3); line-height: 1.1; word-wrap: break-word;">Портфолио Egar'а</h1>
+            <h1 id="main-title" class="font-bold text-dx-gold-light uppercase" style="font-size: clamp(1.8rem, 8vw, 3.75rem); letter-spacing: 0.05em; text-shadow: 0 0 20px rgba(191,166,90,0.3); line-height: 1.1; word-wrap: break-word;"></h1>
         </header>
 
         <main id="portfolio-container" class="pb-16"></main>
 
         <footer class="text-center py-8 border-t border-dx-border mt-12">
-            <p class="text-dx-text-dark">© 2024 Egar. Все права защищены.</p>
+            <p id="footer-text" class="text-dx-text-dark"></p>
         </footer>
     </div>
 
@@ -125,19 +134,75 @@
 
     <script>
         let globalData = [];
+        let currentLang = 'ru';
+        let currentSorts = {};
+
+        const t = {
+            ru: {
+                title: "Портфолио Egar'а",
+                navDefault: "Перейти к разделу...",
+                sortLabel: "Сортировка:",
+                sortRatingDesc: "По рейтингу (высш. -> низш.)",
+                sortRatingAsc: "По рейтингу (низш. -> высш.)",
+                sortNameAsc: "По имени (А -> Я)",
+                sortNameDesc: "По имени (Я -> А)",
+                sortDateDesc: "По дате (сначала новые)",
+                sortDateAsc: "По дате (сначала старые)",
+                dev: "Разработчик:",
+                pub: "Издатель:",
+                release: "Выход:",
+                reviews: "Обзоры:",
+                goToPage: "Перейти на страницу",
+                footer: "© 2026 Egar. Все права защищены.",
+                na: "Н/Д"
+            },
+            en: {
+                title: "Egar's Portfolio",
+                navDefault: "Go to section...",
+                sortLabel: "Sort by:",
+                sortRatingDesc: "Rating (High -> Low)",
+                sortRatingAsc: "Rating (Low -> High)",
+                sortNameAsc: "Name (A -> Z)",
+                sortNameDesc: "Name (Z -> A)",
+                sortDateDesc: "Date (Newest first)",
+                sortDateAsc: "Date (Oldest first)",
+                dev: "Developer:",
+                pub: "Publisher:",
+                release: "Release:",
+                reviews: "Reviews:",
+                goToPage: "Go to page",
+                footer: "© 2026 Egar. All rights reserved.",
+                na: "N/A"
+            }
+        };
+
+        function getVal(obj, key) {
+            if (currentLang === 'en' && obj[key + '_en']) {
+                return obj[key + '_en'];
+            }
+            return obj[key];
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            document.getElementById('lang-btn').innerText = currentLang === 'ru' ? 'EN' : 'RU';
+            renderPortfolio();
+        }
 
         function formatDate(dateStr) {
-            if (!dateStr) return 'Н/Д';
+            if (!dateStr) return t[currentLang].na;
             return dateStr.includes(' ') ? dateStr.split(' ')[0] : dateStr;
         }
 
         function sortGames(games, criteria) {
             return [...games].sort((a, b) => {
+                const nameA = getVal(a, 'name') || '';
+                const nameB = getVal(b, 'name') || '';
                 switch(criteria) {
                     case 'rating-desc': return b.rating - a.rating;
                     case 'rating-asc': return a.rating - b.rating;
-                    case 'name-asc': return a.name.localeCompare(b.name, 'ru');
-                    case 'name-desc': return b.name.localeCompare(a.name, 'ru');
+                    case 'name-asc': return nameA.localeCompare(nameB, currentLang);
+                    case 'name-desc': return nameB.localeCompare(nameA, currentLang);
                     case 'date-desc': return new Date(b.release_date || 0) - new Date(a.release_date || 0);
                     case 'date-asc': return new Date(a.release_date || 0) - new Date(b.release_date || 0);
                     default: return 0;
@@ -154,23 +219,29 @@
         function openMobileModal(game, themeClass, titleColorClass) {
             const modal = document.getElementById('mobile-modal');
             const content = document.getElementById('mobile-modal-content');
+            const langDict = t[currentLang];
             
             content.className = `mobile-modal-content ${themeClass}`;
             const btnColorClass = themeClass === 'theme-blue' ? 'bg-blue-500 hover:bg-blue-400' : 'bg-dx-gold hover:bg-dx-gold-light';
             
+            const gameName = getVal(game, 'name');
+            const gameDesc = getVal(game, 'description');
+            const gameDev = getVal(game, 'developers') || langDict.na;
+            const gamePub = getVal(game, 'publishers') || langDict.na;
+
             content.innerHTML = `
                 <button class="absolute top-3 right-4 text-dx-text-dark hover:text-white text-3xl leading-none" onclick="closeMobileModal()">&times;</button>
-                <img src="${game.pic_link}" alt="${game.name}" class="w-full rounded-md mb-4 object-cover" style="aspect-ratio: 460/215;">
-                <h4 class="font-bold ${titleColorClass} mb-3 leading-tight pr-6" style="font-size: clamp(1.2rem, 5vw, 1.5rem); word-wrap: break-word;">${game.name}</h4>
+                <img src="${game.pic_link}" alt="${gameName}" class="w-full rounded-md mb-4 object-cover" style="aspect-ratio: 460/215;">
+                <h4 class="font-bold ${titleColorClass} mb-3 leading-tight pr-6" style="font-size: clamp(1.2rem, 5vw, 1.5rem); word-wrap: break-word;">${gameName}</h4>
                 <div class="text-sm space-y-2 mb-4 text-dx-text">
-                    <p><strong class="text-dx-text-dark">Разработчик:</strong> ${game.developers || 'Н/Д'}</p>
-                    <p><strong class="text-dx-text-dark">Издатель:</strong> ${game.publishers || 'Н/Д'}</p>
-                    <p><strong class="text-dx-text-dark">Выход:</strong> ${formatDate(game.release_date)}</p>
-                    <p><strong class="text-dx-text-dark">Обзоры:</strong> <span class="text-green-400 font-bold">${game.reviews_percent}%</span> <span class="text-dx-text-dark">(${game.reviews_count})</span></p>
+                    <p><strong class="text-dx-text-dark">${langDict.dev}</strong> ${gameDev}</p>
+                    <p><strong class="text-dx-text-dark">${langDict.pub}</strong> ${gamePub}</p>
+                    <p><strong class="text-dx-text-dark">${langDict.release}</strong> ${formatDate(game.release_date)}</p>
+                    <p><strong class="text-dx-text-dark">${langDict.reviews}</strong> <span class="text-green-400 font-bold">${game.reviews_percent}%</span> <span class="text-dx-text-dark">(${game.reviews_count})</span></p>
                 </div>
                 <hr class="border-dx-border my-4">
-                <p class="text-sm text-dx-text-dark leading-relaxed mb-6">${game.description}</p>
-                <a href="${game.link}" target="_blank" class="block w-full text-center py-3 rounded-md font-bold text-black transition-colors ${btnColorClass}">Перейти на страницу</a>
+                <p class="text-sm text-dx-text-dark leading-relaxed mb-6">${gameDesc}</p>
+                <a href="${game.link}" target="_blank" class="block w-full text-center py-3 rounded-md font-bold text-black transition-colors ${btnColorClass}">${langDict.goToPage}</a>
             `;
             
             modal.classList.add('active');
@@ -182,7 +253,7 @@
             document.body.style.overflow = '';
         }
 
-        function renderCategory(groupIndex, catIndex, containerId, sortCriteria = 'rating-desc') {
+        function renderCategory(groupIndex, catIndex, containerId) {
             const group = globalData[groupIndex];
             const category = group.categories[catIndex];
             const container = document.getElementById(containerId);
@@ -191,11 +262,18 @@
             const isBlue = group.group_id === 'unofficial-section';
             const themeClass = isBlue ? 'theme-blue' : 'theme-gold';
             const titleColorClass = isBlue ? 'text-blue-300' : 'text-dx-gold-light';
+            const langDict = t[currentLang];
 
+            const sortCriteria = currentSorts[containerId] || 'rating-desc';
             const sortedGames = sortGames(category.games, sortCriteria);
 
             sortedGames.forEach(game => {
-                const desc = game.description.length > 250 ? game.description.substring(0, 250) + '...' : game.description;
+                const gameName = getVal(game, 'name');
+                const fullDesc = getVal(game, 'description') || '';
+                const desc = fullDesc.length > 250 ? fullDesc.substring(0, 250) + '...' : fullDesc;
+                const gameDev = getVal(game, 'developers') || langDict.na;
+                const gamePub = getVal(game, 'publishers') || langDict.na;
+
                 const card = document.createElement('a');
                 card.href = game.link;
                 card.className = `game-card ${themeClass}`;
@@ -220,18 +298,18 @@
                 });
 
                 card.innerHTML = `
-                    <img src="${game.pic_link}" alt="${game.name}" class="game-image" loading="lazy">
+                    <img src="${game.pic_link}" alt="${gameName}" class="game-image" loading="lazy">
                     <div class="game-title-container">
-                        <h3 class="game-title">${game.name}</h3>
+                        <h3 class="game-title">${gameName}</h3>
                     </div>
                     
                     <div class="game-info-modal text-left">
-                        <h4 class="font-bold ${titleColorClass} mb-2 leading-tight" style="font-size: clamp(1rem, 4vw, 1.125rem); word-wrap: break-word;">${game.name}</h4>
+                        <h4 class="font-bold ${titleColorClass} mb-2 leading-tight" style="font-size: clamp(1rem, 4vw, 1.125rem); word-wrap: break-word;">${gameName}</h4>
                         <div class="text-sm space-y-1 mb-3 text-dx-text">
-                            <p><strong class="text-dx-text-dark">Разработчик:</strong> ${game.developers || 'Н/Д'}</p>
-                            <p><strong class="text-dx-text-dark">Издатель:</strong> ${game.publishers || 'Н/Д'}</p>
-                            <p><strong class="text-dx-text-dark">Выход:</strong> ${formatDate(game.release_date)}</p>
-                            <p><strong class="text-dx-text-dark">Обзоры:</strong> <span class="text-green-400 font-bold">${game.reviews_percent}%</span> <span class="text-dx-text-dark">(${game.reviews_count})</span></p>
+                            <p><strong class="text-dx-text-dark">${langDict.dev}</strong> ${gameDev}</p>
+                            <p><strong class="text-dx-text-dark">${langDict.pub}</strong> ${gamePub}</p>
+                            <p><strong class="text-dx-text-dark">${langDict.release}</strong> ${formatDate(game.release_date)}</p>
+                            <p><strong class="text-dx-text-dark">${langDict.reviews}</strong> <span class="text-green-400 font-bold">${game.reviews_percent}%</span> <span class="text-dx-text-dark">(${game.reviews_count})</span></p>
                         </div>
                         <hr class="border-dx-border my-2">
                         <p class="text-sm text-dx-text-dark leading-relaxed">${desc}</p>
@@ -241,90 +319,109 @@
             });
         }
 
-        async function loadPortfolio() {
-            try {
-                const response = await fetch('data.json');
-                globalData = await response.json();
-                
-                const container = document.getElementById('portfolio-container');
-                const navSelect = document.getElementById('nav-select');
+        window.handleSortChange = function(groupIndex, catIndex, containerId, criteria) {
+            currentSorts[containerId] = criteria;
+            renderCategory(groupIndex, catIndex, containerId);
+        };
 
-                globalData.forEach((group, groupIndex) => {
-                    const isBlue = group.group_id === 'unofficial-section';
-                    const groupSection = document.createElement('div');
+        function renderPortfolio() {
+            const container = document.getElementById('portfolio-container');
+            const navSelect = document.getElementById('nav-select');
+            const langDict = t[currentLang];
 
-                    if (!isBlue) {
-                        groupSection.innerHTML = `<h2 class="group-title text-dx-gold-light scroll-target" id="${group.group_id}" style="text-shadow: 0 0 15px rgba(191,166,90,0.3);">${group.group_name}</h2>`;
-                        navSelect.innerHTML += `<option value="#${group.group_id}" style="font-weight:bold;">■ ${group.group_name}</option>`;
+            document.getElementById('main-title').innerText = langDict.title;
+            document.title = langDict.title;
+            document.getElementById('footer-text').innerText = langDict.footer;
 
-                        group.categories.forEach((cat, catIndex) => {
-                            navSelect.innerHTML += `<option value="#${cat.category_id}">&nbsp;&nbsp;&nbsp;— ${cat.category_name}</option>`;
-                            const catSection = document.createElement('section');
-                            catSection.className = 'mb-12 scroll-target';
-                            catSection.id = cat.category_id;
-                            const gridId = `grid-${groupIndex}-${catIndex}`;
+            container.innerHTML = '';
+            navSelect.innerHTML = `<option value="" disabled selected>${langDict.navDefault}</option>`;
 
-                            catSection.innerHTML = `
-                                <div class="category-header border-b border-dx-border">
-                                    <h3 class="category-title text-dx-gold w-full sm:w-auto pr-0 sm:pr-4 mb-2 sm:mb-0">${cat.category_name}</h3>
-                                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
-                                        <span class="text-sm text-dx-text-dark hidden sm:inline">Сортировка:</span>
-                                        <select class="sort-dropdown focus:border-dx-gold w-full sm:w-auto" onchange="handleSortChange(${groupIndex}, ${catIndex}, '${gridId}', this.value)">
-                                            <option value="rating-desc">По рейтингу (высш. -> низш.)</option>
-                                            <option value="rating-asc">По рейтингу (низш. -> высш.)</option>
-                                            <option value="name-asc">По имени (А -> Я)</option>
-                                            <option value="name-desc">По имени (Я -> А)</option>
-                                            <option value="date-desc">По дате (сначала новые)</option>
-                                            <option value="date-asc">По дате (сначала старые)</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div id="${gridId}" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
-                            `;
-                            groupSection.appendChild(catSection);
-                        });
-                    } 
-                    else {
-                        const cat = group.categories[0]; 
-                        navSelect.innerHTML += `<option value="#${cat.category_id}" style="font-weight:bold;">■ ${cat.category_name}</option>`;
+            globalData.forEach((group, groupIndex) => {
+                const isBlue = group.group_id === 'unofficial-section';
+                const groupSection = document.createElement('div');
+                const groupName = getVal(group, 'group_name');
+
+                if (!isBlue) {
+                    groupSection.innerHTML = `<h2 class="group-title text-dx-gold-light scroll-target" id="${group.group_id}" style="text-shadow: 0 0 15px rgba(191,166,90,0.3);">${groupName}</h2>`;
+                    navSelect.innerHTML += `<option value="#${group.group_id}" style="font-weight:bold;">■ ${groupName}</option>`;
+
+                    group.categories.forEach((cat, catIndex) => {
+                        const catName = getVal(cat, 'category_name');
+                        navSelect.innerHTML += `<option value="#${cat.category_id}">&nbsp;&nbsp;&nbsp;— ${catName}</option>`;
                         const catSection = document.createElement('section');
-                        catSection.className = 'mb-12 mt-16 scroll-target'; 
+                        catSection.className = 'mb-12 scroll-target';
                         catSection.id = cat.category_id;
-                        const gridId = `grid-${groupIndex}-0`;
+                        const gridId = `grid-${groupIndex}-${catIndex}`;
+                        
+                        if(!currentSorts[gridId]) currentSorts[gridId] = 'rating-desc';
 
                         catSection.innerHTML = `
-                            <div class="category-header border-b border-blue-900 pb-4">
-                                <h2 class="font-bold text-blue-300 uppercase text-center w-full mb-4 sm:mb-0 sm:w-auto sm:text-left pr-0 sm:pr-4" style="font-size: clamp(1.5rem, 6vw, 2.25rem); letter-spacing: 0.05em; text-shadow: 0 0 15px rgba(96, 165, 250, 0.3); line-height: 1.2; word-wrap: break-word;">${cat.category_name}</h2>
+                            <div class="category-header border-b border-dx-border">
+                                <h3 class="category-title text-dx-gold w-full sm:w-auto pr-0 sm:pr-4 mb-2 sm:mb-0">${catName}</h3>
                                 <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
-                                    <span class="text-sm text-dx-text-dark hidden sm:inline">Сортировка:</span>
-                                    <select class="sort-dropdown focus:border-blue-400 w-full sm:w-auto" onchange="handleSortChange(${groupIndex}, 0, '${gridId}', this.value)">
-                                        <option value="rating-desc">По рейтингу (высш. -> низш.)</option>
-                                        <option value="rating-asc">По рейтингу (низш. -> высш.)</option>
-                                        <option value="name-asc">По имени (А -> Я)</option>
-                                        <option value="name-desc">По имени (Я -> А)</option>
-                                        <option value="date-desc">По дате (сначала новые)</option>
-                                        <option value="date-asc">По дате (сначала старые)</option>
+                                    <span class="text-sm text-dx-text-dark hidden sm:inline">${langDict.sortLabel}</span>
+                                    <select class="sort-dropdown focus:border-dx-gold w-full sm:w-auto" onchange="handleSortChange(${groupIndex}, ${catIndex}, '${gridId}', this.value)">
+                                        <option value="rating-desc" ${currentSorts[gridId] === 'rating-desc' ? 'selected' : ''}>${langDict.sortRatingDesc}</option>
+                                        <option value="rating-asc" ${currentSorts[gridId] === 'rating-asc' ? 'selected' : ''}>${langDict.sortRatingAsc}</option>
+                                        <option value="name-asc" ${currentSorts[gridId] === 'name-asc' ? 'selected' : ''}>${langDict.sortNameAsc}</option>
+                                        <option value="name-desc" ${currentSorts[gridId] === 'name-desc' ? 'selected' : ''}>${langDict.sortNameDesc}</option>
+                                        <option value="date-desc" ${currentSorts[gridId] === 'date-desc' ? 'selected' : ''}>${langDict.sortDateDesc}</option>
+                                        <option value="date-asc" ${currentSorts[gridId] === 'date-asc' ? 'selected' : ''}>${langDict.sortDateAsc}</option>
                                     </select>
                                 </div>
                             </div>
                             <div id="${gridId}" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
                         `;
                         groupSection.appendChild(catSection);
-                    }
-
-                    container.appendChild(groupSection);
-                    group.categories.forEach((cat, catIndex) => {
-                        renderCategory(groupIndex, catIndex, `grid-${groupIndex}-${catIndex}`);
                     });
+                } 
+                else {
+                    const cat = group.categories[0]; 
+                    const catName = getVal(cat, 'category_name');
+                    navSelect.innerHTML += `<option value="#${cat.category_id}" style="font-weight:bold;">■ ${catName}</option>`;
+                    const catSection = document.createElement('section');
+                    catSection.className = 'mb-12 mt-16 scroll-target'; 
+                    catSection.id = cat.category_id;
+                    const gridId = `grid-${groupIndex}-0`;
+                    
+                    if(!currentSorts[gridId]) currentSorts[gridId] = 'rating-desc';
+
+                    catSection.innerHTML = `
+                        <div class="category-header border-b border-blue-900 pb-4">
+                            <h2 class="font-bold text-blue-300 uppercase text-center w-full mb-4 sm:mb-0 sm:w-auto sm:text-left pr-0 sm:pr-4" style="font-size: clamp(1.5rem, 6vw, 2.25rem); letter-spacing: 0.05em; text-shadow: 0 0 15px rgba(96, 165, 250, 0.3); line-height: 1.2; word-wrap: break-word;">${catName}</h2>
+                            <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+                                <span class="text-sm text-dx-text-dark hidden sm:inline">${langDict.sortLabel}</span>
+                                <select class="sort-dropdown focus:border-blue-400 w-full sm:w-auto" onchange="handleSortChange(${groupIndex}, 0, '${gridId}', this.value)">
+                                    <option value="rating-desc" ${currentSorts[gridId] === 'rating-desc' ? 'selected' : ''}>${langDict.sortRatingDesc}</option>
+                                    <option value="rating-asc" ${currentSorts[gridId] === 'rating-asc' ? 'selected' : ''}>${langDict.sortRatingAsc}</option>
+                                    <option value="name-asc" ${currentSorts[gridId] === 'name-asc' ? 'selected' : ''}>${langDict.sortNameAsc}</option>
+                                    <option value="name-desc" ${currentSorts[gridId] === 'name-desc' ? 'selected' : ''}>${langDict.sortNameDesc}</option>
+                                    <option value="date-desc" ${currentSorts[gridId] === 'date-desc' ? 'selected' : ''}>${langDict.sortDateDesc}</option>
+                                    <option value="date-asc" ${currentSorts[gridId] === 'date-asc' ? 'selected' : ''}>${langDict.sortDateAsc}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="${gridId}" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"></div>
+                    `;
+                    groupSection.appendChild(catSection);
+                }
+
+                container.appendChild(groupSection);
+                group.categories.forEach((cat, catIndex) => {
+                    renderCategory(groupIndex, catIndex, `grid-${groupIndex}-${catIndex}`);
                 });
+            });
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                globalData = await response.json();
+                renderPortfolio();
             } catch (error) {
                 console.error(error);
             }
         }
-
-        window.handleSortChange = function(groupIndex, catIndex, containerId, criteria) {
-            renderCategory(groupIndex, catIndex, containerId, criteria);
-        };
 
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('scroll-top-btn');
@@ -332,10 +429,12 @@
             else btn.classList.remove('visible');
 
             const navSelect = document.getElementById('nav-select');
+            const langBtn = document.getElementById('lang-btn');
             
             if (window.scrollY < 100) {
                 navSelect.value = "";
                 navSelect.classList.remove('blue-mode');
+                langBtn.classList.remove('blue-mode');
                 return;
             }
 
@@ -356,14 +455,16 @@
                     
                     if (targetValue === '#cat-3') {
                         navSelect.classList.add('blue-mode');
+                        langBtn.classList.add('blue-mode');
                     } else {
                         navSelect.classList.remove('blue-mode');
+                        langBtn.classList.remove('blue-mode');
                     }
                 }
             }
         });
 
-        document.addEventListener('DOMContentLoaded', loadPortfolio);
+        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 </html>
