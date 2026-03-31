@@ -5,8 +5,8 @@
         "group_id": "official-section",
         "categories": [
             {
-                "category_name": "Переводы",
-                "category_name_en": "Translations",
+                "category_name": "Локализация",
+                "category_name_en": "Localization",
                 "category_id": "cat-0",
                 "games": [
                     {
@@ -2604,8 +2604,8 @@
                 ]
             },
             {
-                "category_name": "Корригенда (Русский + английский)",
-                "category_name_en": "Corrigenda (Russian + English)",
+                "category_name": "LQA (Русский + английский)",
+                "category_name_en": "LQA (Russian + English)",
                 "category_id": "cat-1",
                 "games": [
                     {
@@ -2780,7 +2780,7 @@
             },
             {
                 "category_name": "Только техническая часть",
-                "category_name_en": "Tech Only",
+                "category_name_en": "Localization Engineering",
                 "category_id": "cat-2",
                 "games": [
                     {
@@ -4133,12 +4133,12 @@
     },
     {
         "group_name": "Неофициальный раздел",
-        "group_name_en": "Unofficial Section",
+        "group_name_en": "Fan Section",
         "group_id": "unofficial-section",
         "categories": [
             {
                 "category_name": "Неофициальные переводы",
-                "category_name_en": "Unofficial Translations",
+                "category_name_en": "Fan Translations",
                 "category_id": "cat-3",
                 "games": [
                     {
