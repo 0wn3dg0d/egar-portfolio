@@ -1,10 +1,12 @@
 [
     {
         "group_name": "Официальный раздел",
+        "group_name_en": "Official Section",
         "group_id": "official-section",
         "categories": [
             {
                 "category_name": "Переводы",
+                "category_name_en": "Translations",
                 "category_id": "cat-0",
                 "games": [
                     {
@@ -2603,6 +2605,7 @@
             },
             {
                 "category_name": "Корригенда (Русский + английский)",
+                "category_name_en": "Corrigenda (Russian + English)",
                 "category_id": "cat-1",
                 "games": [
                     {
@@ -2777,6 +2780,7 @@
             },
             {
                 "category_name": "Только техническая часть",
+                "category_name_en": "Tech Only",
                 "category_id": "cat-2",
                 "games": [
                     {
@@ -4129,10 +4133,12 @@
     },
     {
         "group_name": "Неофициальный раздел",
+        "group_name_en": "Unofficial Section",
         "group_id": "unofficial-section",
         "categories": [
             {
                 "category_name": "Неофициальные переводы",
+                "category_name_en": "Unofficial Translations",
                 "category_id": "cat-3",
                 "games": [
                     {
